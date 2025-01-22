@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  soham_api
+
+  API for managing projects and users, deployed using AWS SAM.
+
+
+
+Resources:
+  ProjectsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: projects/
+      Handler: app.projectHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Tracing: Active
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: projects
+          POWERTOOLS_METRICS_NAMESPACE: soham_api
+          LOG_LEVEL: INFO
+          MONGO_URI: "mongodb+srv://SohamDev:4Y4DjfJbXAGqJK47@soham-dev.eagjctq.mongodb.net/SohamDB?retryWrites=true&w=majority&appName=Soham-Dev"
+          DB_NAME: "SohamDB"
+      Events:
+        ProjectsApi:
+          Type: Api
+          Properties:
+            Path: /projects
+            Method: ANY
+            Cors:
+              AllowOrigins: "*"
+              AllowHeaders:
+                - "Content-Type"
+                - "Authorization"
+              AllowMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+        ProjectsPutApi:
+          Type: Api
+          Properties:
+            Path: /projects/{id}
+            Method: ANY
+            Cors:
+              AllowOrigins: "*"
+              AllowHeaders:
+                - "Content-Type"
+                - "Authorization"
+              AllowMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+        ProjectEventDeleteApi:
+          Type: Api
+          Properties:
+            Path: /projects/events/{eventId}
+            Method: ANY
+            Cors:
+              AllowOrigins: "*"
+              AllowHeaders:
+                - "Content-Type"
+                - "Authorization"
+              AllowMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+        ProjectEventsApi:
+          Type: Api
+          Properties:
+            Path: /projects/{id}/events
+            Method: ANY
+            Cors:
+              AllowOrigins: "*"
+              AllowHeaders:
+                - "Content-Type"
+                - "Authorization"
+              AllowMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+        ProjectUsersApi:
+          Type: Api
+          Properties:
+            Path: /projects/{id}/users
+            Method: ANY
+            Cors:
+              AllowOrigins: "*"
+              AllowHeaders:
+                - "Content-Type"
+                - "Authorization"
+              AllowMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        EntryPoints:
+          - app.ts
+
+  UsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/
+      Handler: app.userHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Tracing: Active
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: users
+          POWERTOOLS_METRICS_NAMESPACE: soham_api
+          LOG_LEVEL: INFO
+          MONGO_URI: "mongodb+srv://SohamDev:4Y4DjfJbXAGqJK47@soham-dev.eagjctq.mongodb.net/SohamDB?retryWrites=true&w=majority&appName=Soham-Dev"
+          DB_NAME: "SohamDB"
+      Events:
+        UsersApi:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: ANY
+            Cors:
+              AllowOrigins: "*"
+              AllowHeaders:
+                - "Content-Type"
+                - "Authorization"
+              AllowMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+    
+
+
