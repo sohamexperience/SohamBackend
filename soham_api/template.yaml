@@ -5,13 +5,17 @@ Description: >
 
   API for managing projects and users, deployed using AWS SAM.
 
-
+Parameters:
+  StageName:
+    Type: String
+    Default: Dev
 
 Resources:
   ProjectsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: projects/
+      FunctionName: !Sub ProjectsFunction-${StageName}
+      CodeUri: projects
       Handler: app.projectHandler
       Runtime: nodejs20.x
       Architectures:
@@ -28,95 +32,39 @@ Resources:
         ProjectsApi:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /projects
             Method: ANY
-            Cors:
-              AllowOrigins: "*"
-              AllowHeaders:
-                - "Content-Type"
-                - "Authorization"
-              AllowMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
         ProjectsPutApi:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /projects/{id}
             Method: ANY
-            Cors:
-              AllowOrigins: "*"
-              AllowHeaders:
-                - "Content-Type"
-                - "Authorization"
-              AllowMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
         ProjectEventDeleteApi:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /projects/events/{eventId}
             Method: ANY
-            Cors:
-              AllowOrigins: "*"
-              AllowHeaders:
-                - "Content-Type"
-                - "Authorization"
-              AllowMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
         ProjectEventsApi:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /projects/{id}/events
             Method: ANY
-            Cors:
-              AllowOrigins: "*"
-              AllowHeaders:
-                - "Content-Type"
-                - "Authorization"
-              AllowMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
         ProjectUsersApi:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /projects/{id}/users
             Method: ANY
-            Cors:
-              AllowOrigins: "*"
-              AllowHeaders:
-                - "Content-Type"
-                - "Authorization"
-              AllowMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: es2020
-        EntryPoints:
-          - app.ts
 
   UsersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: users/
+      FunctionName: !Sub UsersFunction-${StageName}
+      CodeUri: users
       Handler: app.userHandler
       Runtime: nodejs20.x
       Architectures:
@@ -133,19 +81,17 @@ Resources:
         UsersApi:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /users
             Method: ANY
-            Cors:
-              AllowOrigins: "*"
-              AllowHeaders:
-                - "Content-Type"
-                - "Authorization"
-              AllowMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
-    
 
-
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: SohamApi-backend
+      StageName: !Sub MyApi-${StageName}
+      Cors:
+        AllowMethods: "'GET, POST, PUT, DELETE, OPTIONS'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+        MaxAge: 86400
